@@ -5,6 +5,16 @@ async (page) => {
   const results = [];
   try {
     await p.goto('http://127.0.0.1:3001/');
+    for (const width of [992, 1024, 1199, 1200]) {
+      await p.setViewportSize({ width, height: 900 });
+      await p.emulateMedia({ reducedMotion: 'reduce' });
+      const cards = await p.locator('.pathway').evaluateAll(elements => elements.map(card => ({
+        top: card.getBoundingClientRect().top,
+        overflow: card.scrollWidth > card.clientWidth,
+      })));
+      assert(cards.every(card => Math.abs(card.top - cards[0].top) < 1 && !card.overflow), `Cards must fit in one row at ${width}px`);
+      results.push({ width, layout: 'three cards in one row', status: 'passed' });
+    }
     for (const [width, height, reducedMotion, sticky] of [
       [320, 568, 'no-preference', true],
       [375, 667, 'no-preference', true],
