@@ -1,12 +1,14 @@
 // Run with the Playwright MCP browser_run_code_unsafe filename argument.
 async (page) => {
-  page = await page.context().newPage();
+  const browserContext = await page.context().browser().newContext();
+  page = await browserContext.newPage();
   const check = (condition, message) => { if (!condition) throw new Error(message); };
   const results = [];
   for (const width of [1440, 1280, 1200, 1199, 1024, 820, 769, 768, 767, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });
     const response = await page.goto('http://127.0.0.1:3001/');
     await page.waitForLoadState('networkidle');
+    await page.evaluate(() => document.fonts.ready);
     check(response.ok(), `HTTP error at ${width}px`);
     await page.locator('.academy-hero-photo img').evaluateAll(images => Promise.all(images.map(image => image.decode())));
     check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Horizontal overflow at ${width}px`);
@@ -62,20 +64,45 @@ async (page) => {
     check(await page.evaluate(() => getComputedStyle(document.activeElement).outlineStyle === 'solid'), 'Keyboard focus is not visible');
     check(await page.locator('.academy-actions a').filter({ hasText: 'Enroll now' }).getAttribute('href') === 'https://prinstineacademy.org/register', 'Incorrect enrollment link');
     if (width < 1200) {
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
       const toggle = page.getByRole('button', { name: 'Open navigation' });
       await toggle.focus();
       await page.keyboard.press('Enter');
       check(await page.locator('#mobile-navigation').isVisible(), 'Menu did not open by keyboard');
+      check(await page.evaluate(() => document.querySelector('#mobile-navigation').contains(document.activeElement)), 'Drawer did not receive focus');
+      check(await page.evaluate(() => document.body.style.overflow === 'hidden'), 'Page scroll not locked');
+      for (let i = 0; i < 12; i++) await page.keyboard.press('Tab');
+      check(await page.evaluate(() => document.querySelector('#mobile-navigation').contains(document.activeElement)), 'Focus escaped the modal drawer');
       await page.keyboard.press('Escape');
+      await page.waitForTimeout(400);
       check(await page.locator('#mobile-navigation').isHidden(), 'Escape did not close menu');
       check(await toggle.evaluate(el => el === document.activeElement), 'Menu did not restore focus');
+      check(await page.evaluate(() => document.body.style.overflow !== 'hidden'), 'Page stayed locked after menu closed');
       await toggle.click();
+      await page.locator('#mobile-navigation summary').click();
       await page.locator('#mobile-navigation a[href="#pathways"]').click();
+      await page.waitForTimeout(400);
       check(await page.locator('#mobile-navigation').isHidden(), 'Menu stayed open after navigation');
       check(page.url().endsWith('#pathways'), 'Programs link did not navigate');
     }
     results.push({ width, status: 'passed' });
   }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('http://127.0.0.1:3001/');
+  await page.evaluate(() => window.scrollTo({ top: 400, behavior: 'instant' }));
+  await page.waitForTimeout(400);
+  check(await page.locator('.academy-header').evaluate(el => Math.abs(el.getBoundingClientRect().top) < 1), 'Header does not stay visible on scroll');
+  check(await page.locator('.nav-brand-mark').evaluate(el => getComputedStyle(el).opacity) === '1', 'Header did not switch to compact mark');
+  await page.getByRole('button', { name: 'Open navigation' }).click();
+  await page.waitForTimeout(400);
+  await page.mouse.click(5, 200);
+  await page.waitForTimeout(400);
+  check(await page.locator('#mobile-navigation').isHidden(), 'Backdrop click did not close drawer');
+  await page.getByRole('button', { name: 'Open navigation' }).click();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.waitForTimeout(400);
+  check(await page.locator('#mobile-navigation').isHidden(), 'Drawer stayed open after resizing to desktop');
+  check(await page.evaluate(() => document.body.style.overflow !== 'hidden'), 'Resize left page scroll locked');
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.clock.install();
   await page.goto('http://127.0.0.1:3001/');
@@ -112,6 +139,10 @@ async (page) => {
     check(await mobileGallery.locator('button').count() === 0, 'Mobile hero still displays controls');
     await mobile.getByRole('button', { name: 'Open navigation' }).tap();
     check(await mobile.locator('#mobile-navigation').isVisible(), 'Touch menu failed');
+    check(await mobile.locator('#mobile-navigation').evaluate(el => getComputedStyle(el).transitionDuration) === '0s', 'Drawer ignores reduced motion');
+    await mobile.getByRole('button', { name: 'Close navigation' }).tap();
+    check(await mobile.locator('#mobile-navigation').isHidden(), 'Touch close failed');
   } finally { await context.close(); }
+  await browserContext.close();
   return { results, slideshow: 'passed', reducedMotion: 'passed', touchMenu: 'passed' };
 }

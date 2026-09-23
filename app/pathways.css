@@ -84,6 +84,9 @@
   .pathway-action { width: 44px; height: 44px; padding: 10px; }
   .pathway-action svg { width: 24px; height: 24px; }
 }
+@media (min-width: 768px) and (max-width: 991px) {
+  .pathway { top: 88px; }
+}
 @media (hover: none) {
   .pathway .pathway-action { width: 168px; }
   .pathway-action-label { transform: none; opacity: 1; }

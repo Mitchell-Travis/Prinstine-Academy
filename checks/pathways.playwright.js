@@ -32,23 +32,25 @@ async (page) => {
         window.scrollTo(0, 0);
         await new Promise(requestAnimationFrame);
         const cards = [...document.querySelectorAll('.pathway')];
+        const stickyTop = document.querySelector('.academy-header').getBoundingClientRect().height;
         const secondTop = cards[1].getBoundingClientRect().top;
         // Scroll until the second card should cover the first.
-        window.scrollTo(0, secondTop - 80 + 40);
+        window.scrollTo(0, secondTop - stickyTop + 40);
         await new Promise(requestAnimationFrame);
         const boxes = cards.map(card => card.getBoundingClientRect());
         return {
           position: getComputedStyle(cards[0]).position,
+          stickyTop,
           tops: boxes.map(box => box.top),
           bottoms: boxes.map(box => box.bottom),
-          front: document.elementFromPoint(boxes[1].left + 20, 100)?.closest('.pathway')?.id,
+          front: document.elementFromPoint(boxes[1].left + 20, stickyTop + 20)?.closest('.pathway')?.id,
           overflow: document.documentElement.scrollWidth > innerWidth,
         };
       });
       assert(!result.overflow, `Horizontal overflow at ${width}x${height}`);
       if (sticky) {
         assert(result.position === 'sticky', `Stacking disabled at ${width}x${height}`);
-        assert(result.tops.slice(0, 2).every(top => Math.abs(top - 80) < 1), `Cards failed to stack at ${width}x${height}`);
+        assert(result.tops.slice(0, 2).every(top => Math.abs(top - result.stickyTop) < 1), `Cards failed to stack below the header at ${width}x${height}`);
         assert(result.bottoms[1] <= height, `Stacked card cut off at ${width}x${height}`);
         assert(result.front === 'program-organization', 'Second card did not cover first');
       } else {
