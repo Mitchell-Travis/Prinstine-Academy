@@ -14,11 +14,10 @@ const pathways = [
   ["Acceleration programs", "Focused support for your next step.", "#program-acceleration"],
 ];
 
-function NavIcon({ name, className = "" }: { name: "arrow" | "chevron" | "certificate" | "menu" | "close"; className?: string }) {
+function NavIcon({ name, className = "" }: { name: "arrow" | "chevron" | "menu" | "close"; className?: string }) {
   const paths = {
     arrow: "M7 17 17 7M7 7h10v10",
     chevron: "m7 10 5 5 5-5",
-    certificate: "M14 3H5v18h14V8l-5-5ZM14 3v5h5M8 14l2.5 2.5L16 11",
     menu: "M3 5h18M3 12h18M3 19h18",
     close: "m5 5 14 14M5 19 19 5",
   };
@@ -57,8 +56,7 @@ export default function Navigation() {
           <a className="hidden min-h-11 items-center hover:text-brand min-[75rem]:flex" href="https://prinstineacademy.org/gallery" target="_blank" rel="noreferrer">Gallery <NavIcon name="arrow" className="ml-1 size-4" /></a>
         </div>
         <div className="academy-actions ml-auto flex shrink-0 items-center gap-2">
-          <a className="mr-1 hidden min-h-11 items-center text-[14px] underline underline-offset-4 hover:text-brand min-[75rem]:flex" href="https://prinstineacademy.org/verify-certificate" target="_blank" rel="noreferrer">Verify certificate <NavIcon name="arrow" className="ml-1 size-4" /></a>
-          <a className="hidden size-11 items-center justify-center hover:text-brand md:flex min-[75rem]:hidden" href="https://prinstineacademy.org/verify-certificate" target="_blank" rel="noreferrer" aria-label="Verify a certificate" title="Verify a certificate"><NavIcon name="certificate" /></a>
+          <a className="mr-1 hidden min-h-11 items-center text-[14px] whitespace-nowrap underline underline-offset-4 hover:text-brand md:flex" href="https://prinstineacademy.org/verify-certificate" target="_blank" rel="noreferrer">Verify certificate <NavIcon name="arrow" className="ml-1 size-4" /></a>
           <a className="inline-flex min-h-11 items-center justify-center rounded-[2px] border border-brand bg-brand px-3 text-[14px] whitespace-nowrap text-white transition-colors hover:border-brand-hover hover:bg-brand-hover md:px-5 md:text-base" href="https://prinstineacademy.org/register" target="_blank" rel="noreferrer">Enroll now</a>
           <a className="hidden min-h-11 items-center justify-center rounded-[2px] border border-navy px-5 text-base whitespace-nowrap transition-colors hover:bg-mist md:inline-flex" href="mailto:info@prinstineacademy.org">Talk to us</a>
           <button className="nav-toggle flex size-11 cursor-pointer items-center justify-center min-[75rem]:hidden" type="button" aria-expanded={open === "navigation"} aria-controls="mobile-navigation" aria-label={open === "navigation" ? "Close navigation" : "Open navigation"} onClick={(event) => {

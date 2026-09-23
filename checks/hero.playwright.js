@@ -20,7 +20,9 @@ async (page) => {
     check(frame.border === frame.bottomBorder, 'Tablet frame has uneven bezels');
     check(await page.locator('.academy-header img').count() === 0, 'Image logo was not removed');
     check((await page.locator('.academy-wordmark').innerText()).includes('Prinstine'), 'Missing wordmark');
-    check(await page.locator('.academy-actions a[aria-label="Verify a certificate"]').isVisible() === (width >= 768 && width < 1200), 'Duplicate or missing certificate icon');
+    const verify = page.locator('.academy-actions a').filter({ hasText: 'Verify certificate' });
+    check(await verify.isVisible() === (width >= 768), 'Certificate label missing on tablet or desktop');
+    if (width >= 768) await verify.click({ trial: true });
     check(await page.locator('.nav-toggle').isVisible() === (width < 1200), 'Incorrect navigation breakpoint');
     const columns = await page.locator('.academy-hero-inner').evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').length);
     check(columns === (width <= 768 ? 1 : 2), `Wrong hero layout at ${width}px`);

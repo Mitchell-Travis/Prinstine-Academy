@@ -78,7 +78,7 @@ export default function CommunityStories() {
                     <>
                       <img src={asset(`/images/${item.image}`)} alt={item.alt} draggable={false} loading={Math.abs(index - active) <= 1 ? "eager" : "lazy"} width="948" height="533" className="h-full w-full select-none object-cover" style={{ objectPosition: item.position }} />
                       {index === 0 ? <a href={reelUrl(item.id)} target="_blank" rel="noreferrer" aria-label={`Watch on Facebook: ${item.title}`} className="absolute inset-0 flex items-center justify-center focus-visible:outline-offset-[-5px]!">
-                        <span className="rounded-xl bg-gold-soft px-5 py-4 text-sm font-semibold text-navy shadow-lg hover:bg-gold-bright">Watch on Facebook ↗</span>
+                        <span className="inline-flex items-center gap-2 rounded-xl bg-gold-soft px-5 py-4 text-sm font-semibold text-navy shadow-lg hover:bg-gold-bright">Watch on Facebook <svg className="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg></span>
                       </a> : <button type="button" onClick={() => setPlaying(index)} aria-label={`Load Facebook video: ${item.title}`} className="group absolute inset-0 flex cursor-grab items-center justify-center active:cursor-grabbing focus-visible:outline-offset-[-5px]!">
                         <span className="flex size-14 items-center justify-center rounded-xl bg-gold-soft text-navy shadow-lg transition-colors group-hover:bg-gold-bright md:size-18"><svg className="size-6 md:size-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m8 4 12 8-12 8z" /></svg></span>
                       </button>}
@@ -95,7 +95,7 @@ export default function CommunityStories() {
             <p className="text-sm font-medium md:text-base">{moment.title}</p>
             <p className="mt-1 text-xs text-muted">Video: Prinstine Group · Cover: academy gallery photo, not a video still</p>
             <div className="mt-2 flex flex-wrap gap-x-5 text-xs">
-              <a href={reelUrl(moment.id)} target="_blank" rel="noreferrer" className="inline-block py-2 font-semibold text-brand underline underline-offset-4">Open on Facebook <span aria-hidden="true">↗</span></a>
+              <a href={reelUrl(moment.id)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 py-2 font-semibold text-brand underline underline-offset-4">Open on Facebook <svg className="size-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg></a>
               {playing !== null && <button type="button" onClick={() => { setPlaying(null); requestAnimationFrame(() => rail.current?.children[active]?.querySelector<HTMLButtonElement>("button")?.focus()); }} className="cursor-pointer py-2 font-semibold text-brand underline underline-offset-4">Close video</button>}
             </div>
           </div>

@@ -36,12 +36,15 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <div className="bg-gold-soft text-navy">
+      <div className="border-y border-brand/10 bg-mist text-navy">
         <div className="mx-auto grid max-w-[1440px] grid-cols-3 items-center gap-x-2 gap-y-4 px-[var(--page-gutter)] py-6 md:flex md:min-h-[90px] md:justify-between md:gap-6">
-          <p className="col-span-3 m-0 text-xs leading-normal md:text-sm">Learning with purpose.<br className="hidden md:block" /> Growing together in Liberia.</p>
-          <strong className="text-[clamp(21px,5.7vw,28px)] font-medium tracking-[-.045em] md:text-[clamp(23px,2.35vw,34px)]"><span className="mr-3 hidden text-[22px] text-brand lg:inline" aria-hidden="true">✳</span>Educate.</strong>
-          <strong className="text-[clamp(21px,5.7vw,28px)] font-medium tracking-[-.045em] md:text-[clamp(23px,2.35vw,34px)]"><span className="mr-3 hidden text-[22px] text-brand lg:inline" aria-hidden="true">✳</span>Empower.</strong>
-          <strong className="text-[clamp(21px,5.7vw,28px)] font-medium tracking-[-.045em] md:text-[clamp(23px,2.35vw,34px)]"><span className="mr-3 hidden text-[22px] text-brand lg:inline" aria-hidden="true">✳</span>Elevate.</strong>
+          <p className="col-span-3 m-0 text-xs leading-normal text-muted md:text-sm">Learning with purpose.<br className="hidden md:block" /> Growing together in Liberia.</p>
+          {["Educate.", "Empower.", "Elevate."].map(value => (
+            <strong key={value} className="flex items-center gap-3 text-[clamp(21px,5.7vw,28px)] font-medium tracking-[-.045em] md:text-[clamp(23px,2.35vw,34px)]">
+              <svg className="hidden size-5 shrink-0 text-brand lg:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" /></svg>
+              {value}
+            </strong>
+          ))}
         </div>
       </div>
 

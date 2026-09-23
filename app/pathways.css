@@ -89,7 +89,7 @@
   .pathway .pathway-action { width: 168px; }
   .pathway-action-label { transform: none; opacity: 1; }
 }
-@media (max-height: 700px), (prefers-reduced-motion: reduce) {
+@media (max-height: 500px), (min-width: 768px) and (max-height: 700px), (prefers-reduced-motion: reduce) {
   .pathway { position: relative; top: auto; }
 }
 @media (prefers-reduced-motion: reduce) {
