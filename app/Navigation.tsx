@@ -75,7 +75,7 @@ export default function Navigation() {
       if (open === "programs" && !event.currentTarget.contains(event.relatedTarget)) setOpen(null);
     }}>
       <div aria-hidden="true" className="nav-rails pointer-events-none absolute inset-0 mx-auto max-w-[1440px] px-[var(--rail-inset)]">
-        <div className="h-full border-y border-[#8b9dc2]/40" />
+        <div className="h-full border border-[#8b9dc2]/40" />
       </div>
       <a className="absolute -top-40 left-5 z-20 bg-navy px-5 py-3 text-white focus:top-3" href="#top">Skip to content</a>
       <nav className="academy-nav mx-auto flex min-h-20 max-w-[1440px] items-center gap-2 px-[var(--page-gutter)] md:min-h-[88px] md:gap-5" aria-label="Main navigation">
