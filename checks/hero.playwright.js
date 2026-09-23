@@ -81,40 +81,35 @@ async (page) => {
   await page.goto('http://127.0.0.1:3001/');
   await page.waitForLoadState('networkidle');
   await page.mouse.move(0, 0);
-  const gallery = page.getByRole('group', { name: 'Prinstine Academy photos', exact: true });
-  const selected = () => gallery.locator('button[aria-pressed="true"]').getAttribute('aria-label');
+  const gallery = page.getByRole('group', { name: /^Prinstine Academy photos/ });
+  const selected = () => gallery.locator('img[aria-hidden="false"]').getAttribute('src');
   check(await gallery.locator('img').count() === 4, 'Expected four hero photos');
+  check(await gallery.locator('button, svg').count() === 0, 'Hero must display only images, without controls');
+  await gallery.locator('img').evaluateAll(images => Promise.all(images.map(image => image.decode())));
   await page.clock.fastForward(6100);
-  check(await selected() === 'Show photo 2', 'Slideshow did not advance');
-  await gallery.getByRole('button', { name: 'Pause photo slideshow' }).click();
+  check((await selected()).endsWith('/hero-cohort-2.jpeg'), 'Slideshow did not advance');
+  await gallery.hover();
+  await page.clock.fastForward(12000);
+  check((await selected()).endsWith('/hero-cohort-2.jpeg'), 'Hover did not pause slideshow');
   await page.mouse.move(0, 0);
-  await page.locator('.academy-hero-actions a').first().focus();
-  await page.clock.fastForward(12000);
-  check(await selected() === 'Show photo 2', 'Pause did not stop slideshow');
-  for (const index of [1, 2, 3, 4]) {
-    await gallery.getByRole('button', { name: `Show photo ${index}`, exact: true }).click();
-    check(await selected() === `Show photo ${index}`, 'Photo selection failed');
-    await gallery.locator('img[aria-hidden="false"]').evaluate(image => image.decode());
+  for (const file of ['hero-cohort-3.jpeg', 'prinstine-hero.jpeg', 'cohort-group.jpeg']) {
+    await page.clock.fastForward(6100);
+    check((await selected()).endsWith(`/${file}`), 'Slideshow did not cycle through all four photos');
   }
-  await gallery.getByRole('button', { name: 'Play photo slideshow' }).click();
-  await page.clock.fastForward(6100);
-  check(await selected() === 'Show photo 1', 'Slideshow did not resume and wrap');
-  await gallery.getByRole('button', { name: 'Show photo 1', exact: true }).focus();
+  await gallery.focus();
   await page.clock.fastForward(12000);
-  check(await selected() === 'Show photo 1', 'Slideshow moved during keyboard interaction');
+  check((await selected()).endsWith('/cohort-group.jpeg'), 'Slideshow moved during keyboard focus');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.locator('.academy-hero-actions a').first().focus();
   await page.clock.fastForward(12000);
-  check(await selected() === 'Show photo 1', 'Reduced motion did not stop slideshow');
+  check((await selected()).endsWith('/cohort-group.jpeg'), 'Reduced motion did not stop slideshow');
   const context = await page.context().browser().newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   try {
     const mobile = await context.newPage();
     await mobile.goto('http://127.0.0.1:3001/');
     check(await mobile.locator('.academy-hero-photo').evaluate(el => getComputedStyle(el).animationName) === 'none', 'Hero ignores reduced motion');
-    const mobileGallery = mobile.getByRole('group', { name: 'Prinstine Academy photos', exact: true });
-    await mobileGallery.getByRole('button', { name: 'Play photo slideshow' }).waitFor();
-    await mobileGallery.getByRole('button', { name: 'Show photo 3', exact: true }).tap();
-    check(await mobileGallery.locator('button[aria-pressed="true"]').getAttribute('aria-label') === 'Show photo 3', 'Touch photo selection failed');
+    const mobileGallery = mobile.getByRole('group', { name: /^Prinstine Academy photos/ });
+    check(await mobileGallery.locator('button').count() === 0, 'Mobile hero still displays controls');
     await mobile.getByRole('button', { name: 'Open navigation' }).tap();
     check(await mobile.locator('#mobile-navigation').isVisible(), 'Touch menu failed');
   } finally { await context.close(); }
