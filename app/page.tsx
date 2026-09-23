@@ -1,7 +1,7 @@
 import Pathways from "./Pathways";
 import Navigation from "./Navigation";
 import CommunityStories from "./CommunityStories";
-import { asset } from "./assets";
+import HeroPhotos from "./HeroPhotos";
 
 const Arrow = () => <span aria-hidden="true">→</span>;
 
@@ -30,8 +30,8 @@ export default function Home() {
               <path d="M330 -100C180 85 220 175 355 279S590 456 276 736" stroke="currentColor" strokeWidth="140" />
             </svg>
             <figure className="academy-hero-photo relative m-0 ml-[4%] aspect-[1.55] w-[91%] overflow-hidden rounded-[14px] border-[6px] border-navy bg-navy shadow-[0_22px_26px_-12px_#07133d66,0_5px_8px_#07133d20] [transform:perspective(1600px)_rotateY(-16deg)] motion-safe:animate-[hero-photo-in_.9s_.1s_ease-out_both] md:rounded-[20px] md:border-[9px]">
-              <img className="block h-full w-full rounded-[7px] object-cover md:rounded-[11px]" src={asset("/images/cohort-group.jpeg")} width="1536" height="1024" fetchPriority="high" alt="Three attendees wearing blue and gold Prinstine Academy scarves at an academy event" />
-              <figcaption className="sr-only">Prinstine Academy community photo. Source: prinstineacademy.org.</figcaption>
+              <HeroPhotos />
+              <figcaption className="sr-only">Prinstine Academy community photos. Source: prinstineacademy.org.</figcaption>
             </figure>
           </div>
         </div>

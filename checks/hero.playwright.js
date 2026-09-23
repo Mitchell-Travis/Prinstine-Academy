@@ -8,7 +8,7 @@ async (page) => {
     const response = await page.goto('http://127.0.0.1:3001/');
     await page.waitForLoadState('networkidle');
     check(response.ok(), `HTTP error at ${width}px`);
-    await page.locator('.academy-hero-photo img').evaluate(image => image.decode());
+    await page.locator('.academy-hero-photo img').evaluateAll(images => Promise.all(images.map(image => image.decode())));
     check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Horizontal overflow at ${width}px`);
     check(await page.locator('h1').count() === 1, 'Expected one main heading');
     const frame = await page.locator('.academy-hero-photo').evaluate(el => {
@@ -76,13 +76,47 @@ async (page) => {
     }
     results.push({ width, status: 'passed' });
   }
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.clock.install();
+  await page.goto('http://127.0.0.1:3001/');
+  await page.waitForLoadState('networkidle');
+  await page.mouse.move(0, 0);
+  const gallery = page.getByRole('group', { name: 'Prinstine Academy photos', exact: true });
+  const selected = () => gallery.locator('button[aria-pressed="true"]').getAttribute('aria-label');
+  check(await gallery.locator('img').count() === 4, 'Expected four hero photos');
+  await page.clock.fastForward(6100);
+  check(await selected() === 'Show photo 2', 'Slideshow did not advance');
+  await gallery.getByRole('button', { name: 'Pause photo slideshow' }).click();
+  await page.mouse.move(0, 0);
+  await page.locator('.academy-hero-actions a').first().focus();
+  await page.clock.fastForward(12000);
+  check(await selected() === 'Show photo 2', 'Pause did not stop slideshow');
+  for (const index of [1, 2, 3, 4]) {
+    await gallery.getByRole('button', { name: `Show photo ${index}`, exact: true }).click();
+    check(await selected() === `Show photo ${index}`, 'Photo selection failed');
+    await gallery.locator('img[aria-hidden="false"]').evaluate(image => image.decode());
+  }
+  await gallery.getByRole('button', { name: 'Play photo slideshow' }).click();
+  await page.clock.fastForward(6100);
+  check(await selected() === 'Show photo 1', 'Slideshow did not resume and wrap');
+  await gallery.getByRole('button', { name: 'Show photo 1', exact: true }).focus();
+  await page.clock.fastForward(12000);
+  check(await selected() === 'Show photo 1', 'Slideshow moved during keyboard interaction');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.locator('.academy-hero-actions a').first().focus();
+  await page.clock.fastForward(12000);
+  check(await selected() === 'Show photo 1', 'Reduced motion did not stop slideshow');
   const context = await page.context().browser().newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   try {
     const mobile = await context.newPage();
     await mobile.goto('http://127.0.0.1:3001/');
     check(await mobile.locator('.academy-hero-photo').evaluate(el => getComputedStyle(el).animationName) === 'none', 'Hero ignores reduced motion');
+    const mobileGallery = mobile.getByRole('group', { name: 'Prinstine Academy photos', exact: true });
+    await mobileGallery.getByRole('button', { name: 'Play photo slideshow' }).waitFor();
+    await mobileGallery.getByRole('button', { name: 'Show photo 3', exact: true }).tap();
+    check(await mobileGallery.locator('button[aria-pressed="true"]').getAttribute('aria-label') === 'Show photo 3', 'Touch photo selection failed');
     await mobile.getByRole('button', { name: 'Open navigation' }).tap();
     check(await mobile.locator('#mobile-navigation').isVisible(), 'Touch menu failed');
   } finally { await context.close(); }
-  return { results, reducedMotion: 'passed', touchMenu: 'passed' };
+  return { results, slideshow: 'passed', reducedMotion: 'passed', touchMenu: 'passed' };
 }
