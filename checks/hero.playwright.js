@@ -38,11 +38,13 @@ async (page) => {
       const gap = parseFloat(getComputedStyle(document.querySelector('main')).getPropertyValue('--rail-gap'));
       const lefts = ['.academy-wordmark', '#hero-title', '.pathways-grid', '.community-window', '#concept-title'].map(s => box(s).left);
       const rights = ['.academy-actions', '.pathways-grid', '.community-window'].map(s => box(s).right);
-      return { gap, lefts: lefts.map(x => x - rails.left), rights: rights.map(x => rails.right - x), railAlignment: Math.abs(navRails.left - rails.left) + Math.abs(navRails.right - rails.right), navBorder: getComputedStyle(document.querySelector('.nav-rails > div')).borderBottomWidth };
+      const horizontalRails = box('.nav-horizontal-rails');
+      return { gap, lefts: lefts.map(x => x - rails.left), rights: rights.map(x => rails.right - x), railAlignment: Math.abs(navRails.left - rails.left) + Math.abs(navRails.right - rails.right), navBorder: getComputedStyle(document.querySelector('.nav-horizontal-rails')).borderBottomWidth, edgeToEdge: horizontalRails.left === 0 && horizontalRails.right === innerWidth };
     });
     check(spacing.lefts.every(gap => Math.abs(gap - spacing.gap) < 1), `Inconsistent left rail spacing at ${width}px`);
     check(spacing.rights.every(gap => Math.abs(gap - spacing.gap) < 1), `Inconsistent right rail spacing at ${width}px`);
     check(spacing.railAlignment < 1 && spacing.navBorder === '1px', 'Navigation rail lines do not align');
+    check(spacing.edgeToEdge, 'Horizontal navigation rails do not reach both screen edges');
     const iconStrokes = await page.locator('.academy-header svg').evaluateAll(icons => icons.map(icon => icon.getAttribute('stroke-width')));
     check(iconStrokes.every(stroke => stroke === '1.75'), 'Inconsistent navigation icon strokes');
     if (width >= 768) check(await page.locator('.academy-actions a[href="mailto:info@prinstineacademy.org"]').isVisible(), 'Tablet secondary action missing');
