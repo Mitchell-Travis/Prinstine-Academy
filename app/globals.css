@@ -1,0 +1,27 @@
+@import "./pathways.css";
+@import "./hero.css";
+@import "tailwindcss";
+
+@theme inline {
+  --color-brand: var(--blue);
+  --color-brand-hover: #0b2ea6;
+  --color-navy: var(--navy);
+  --color-mist: var(--mist);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-gold-soft: #ffdfa0;
+  --color-gold-bright: #fbbf24;
+}
+
+:root { --blue:#123ac7; --navy:#07133d; --gold:#e6a800; --mist:#f5f7fc; --ink:#17213f; --muted:#66708a; --line:#dfe3ed; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; color: var(--ink); background: var(--mist); font-family: Arial, Helvetica, sans-serif; }
+.concept-bar { display: flex; justify-content: space-between; padding: 9px max(var(--page-gutter), calc((100% - 1440px)/2 + var(--page-gutter))); background: #f8df9f; color: #382800; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+@media (max-width: 760px) {
+  .concept-bar { padding-block: 8px; font-size: 9px; }
+  .concept-bar span:last-child { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; }
+}

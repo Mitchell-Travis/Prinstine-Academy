@@ -1,0 +1,97 @@
+.proof {
+  padding: 97px max(var(--page-gutter), calc((100% - 1440px) / 2 + var(--page-gutter))) 124px;
+  background: var(--blue);
+}
+.pathway-shape-defs { position: absolute; pointer-events: none; }
+.pathways-heading { max-width: 820px; margin: 0 auto 52px; text-align: center; }
+.pathways-heading h2 { margin: 0; color: white; font: 700 clamp(36px, 4vw, 54px)/1.15 Arial, Helvetica, sans-serif; letter-spacing: -.045em; }
+.pathways-heading > p { max-width: 680px; margin: 18px auto 0; color: #e3eaff; font-size: 18px; line-height: 1.5; }
+.pathways-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px; max-width: 1280px; margin: auto; }
+.pathway {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+  min-height: 398px;
+  padding: 20px 16px 20px 30px;
+  border-radius: 16px;
+  color: var(--navy);
+  scroll-margin-top: 24px;
+}
+.pathway-certificate { background: #ffdfa0; }
+.pathway-organization { background: #dfeaff; }
+.pathway-acceleration { background: #f8f9fc; }
+.pathway-photo { position: relative; width: 116px; height: 116px; margin-left: auto; flex: none; }
+.pathway-photo img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+.pathway-certificate .pathway-photo img { border-radius: 100% 16px 16px 16px; object-position: 50% 38%; }
+.pathway-organization .pathway-photo img { border-radius: 60% 60% 16px 16px; object-position: 52% center; }
+.pathway-acceleration .pathway-photo img { clip-path: url(#pathway-clover); object-position: 56% 63%; }
+.pathway-content { display: flex; flex: 1; flex-direction: column; justify-content: space-between; gap: 26px; }
+.pathway h3 { margin: 0 0 12px; font: 700 29px/1.12 Arial, Helvetica, sans-serif; letter-spacing: -.035em; }
+.pathway p { margin: 0; color: var(--ink); font-size: 17px; line-height: 1.46; }
+.pathway-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+  width: 48px;
+  height: 48px;
+  flex: none;
+  padding: 8px;
+  margin-left: auto;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--blue);
+  transition: width .3s ease-in-out;
+}
+.pathway-acceleration .pathway-action { background: #eaf0ff; }
+.pathway-action-label { position: absolute; left: 20px; white-space: nowrap; font-size: 15px; color: var(--navy); opacity: 0; transform: translateX(-110px); transition: transform .3s ease-in-out, opacity .3s ease-in-out; }
+.pathway-action svg { width: 32px; height: 32px; flex: none; }
+@media (hover: hover) and (pointer: fine) {
+  .pathway:hover .pathway-action { width: 178px; }
+  .pathway:hover .pathway-action-label { opacity: 1; transform: translateX(0); }
+}
+.pathway:focus-visible { outline: 4px solid var(--gold); outline-offset: 5px; }
+.pathway:focus-visible .pathway-action { width: 178px; }
+.pathway:focus-visible .pathway-action-label { opacity: 1; transform: translateX(0); }
+[id^="program-"] { scroll-margin-top: 24px; }
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .proof { padding-block: 80px; }
+  .pathways-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 991px) {
+  .proof { padding-block: 60px; }
+  .pathways-grid { grid-template-columns: 1fr; }
+  .pathway { position: sticky; top: 80px; min-height: 403px; padding: 0; gap: 22px; overflow: hidden; }
+  .pathway-photo { width: 100%; height: auto; aspect-ratio: 7 / 3; margin: 0; }
+  .pathway .pathway-photo img { border-radius: 0; clip-path: none; }
+  .pathway-certificate .pathway-photo img { object-position: 50% 36%; }
+  .pathway-organization .pathway-photo img { object-position: 52% 28%; }
+  .pathway-acceleration .pathway-photo img { object-position: 50% 58%; }
+  .pathway-content { padding: 20px; gap: 26px; }
+  .pathway h3 { font-size: 24px; }
+  .pathway p { font-size: 16px; }
+  .pathway:focus-visible { z-index: 1; outline-offset: -4px; }
+}
+@media (max-width: 767px) {
+  .proof { padding-block: 40px; }
+  .pathways-heading { margin-bottom: 44px; }
+  .pathways-heading h2 { font-size: 36px; }
+  .pathways-heading > p { font-size: 16px; }
+  .pathway h3 { font-size: 23px; }
+  .pathway p { font-size: 15px; }
+  .pathway-action { width: 44px; height: 44px; padding: 10px; }
+  .pathway-action svg { width: 24px; height: 24px; }
+}
+@media (hover: none) {
+  .pathway .pathway-action { width: 168px; }
+  .pathway-action-label { transform: none; opacity: 1; }
+}
+@media (max-height: 700px), (prefers-reduced-motion: reduce) {
+  .pathway { position: relative; top: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pathway-action, .pathway-action-label { transition: none; }
+}
